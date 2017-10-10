@@ -1,6 +1,9 @@
 package com.practice.demo.service;
 
-import com.practice.demo.entity.User;
+import com.practice.demo.dto.request.CreateUserRequestDTO;
+import com.practice.demo.dto.request.UpdateUserRequestDTO;
+import com.practice.demo.entity.UserEntity;
+import com.practice.demo.exception.EntityNotFoundException;
 import com.practice.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,51 +21,59 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(User user) {
+    public UserEntity create(UserEntity user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public UserEntity create(CreateUserRequestDTO userRequestDTO) {
+        UserEntity user = new UserEntity();
+        user.setEmail(userRequestDTO.getEmail());
+        user.setName(userRequestDTO.getName());
         return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public User read(Long id) {
+    public UserEntity read(Long id) {
         return userRepository.findOne(id);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public User readByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
     @Transactional
     @Override
-    public User update(User user) {
+    public UserEntity update(UserEntity user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public UserEntity update(UpdateUserRequestDTO userRequestDTO, Long id) {
+        UserEntity user = this.read(id);
+
+        if (user == null) {
+            throw new EntityNotFoundException("User with %s not exists", id.toString());
+        }
+
+        user.setName(userRequestDTO.getName());
         return userRepository.save(user);
     }
 
     @Transactional
     @Override
-    public void delete(User user) {
+    public void delete(UserEntity user) {
         userRepository.delete(user);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Long getIdByEmail(String email) {
-        return userRepository.findByEmail(email).getId();
     }
 
     @Transactional
     @Override
-    public User delete(Long id) {
-        User user = userRepository.findOne(id);
+    public UserEntity delete(Long id) {
+        UserEntity user = userRepository.findOne(id);
         delete(user);
         return user;
     }
 
     @Transactional
     @Override
-    public List<User> findAll() {
+    public List<UserEntity> findAll() {
         return userRepository.findAll();
     }
 }

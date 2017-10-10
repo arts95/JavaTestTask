@@ -2,11 +2,11 @@ package com.practice.demo.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserRoleListItem {
+public class UserListItemDTO {
     @JsonProperty("id")
     private Long id;
     private String name;
-    private UserDetail user;
+    private String email;
 
     public String getName() {
         return name;
@@ -16,13 +16,12 @@ public class UserRoleListItem {
         this.name = name;
     }
 
-
-    public UserDetail getUser() {
-        return user;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUser(UserDetail user) {
-        this.user = user;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {

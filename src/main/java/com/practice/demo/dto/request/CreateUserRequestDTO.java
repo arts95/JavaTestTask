@@ -3,7 +3,7 @@ package com.practice.demo.dto.request;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class CreateUserRequest {
+public class CreateUserRequestDTO {
     @NotEmpty
     @Email
     private String email;

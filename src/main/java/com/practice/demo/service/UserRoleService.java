@@ -1,21 +1,26 @@
 package com.practice.demo.service;
 
-import com.practice.demo.entity.UserRole;
+import com.practice.demo.dto.request.CreateUserRoleRequestDTO;
+import com.practice.demo.dto.request.UpdateUserRequestDTO;
+import com.practice.demo.dto.request.UpdateUserRoleRequestDTO;
+import com.practice.demo.entity.UserRoleEntity;
 
 import java.util.List;
 
 public interface UserRoleService {
-    UserRole create(UserRole role);
+    UserRoleEntity create(UserRoleEntity role);
 
-    UserRole read(Long id);
+    UserRoleEntity create(CreateUserRoleRequestDTO userRoleRequestDTO);
 
-    UserRole readByUserId(Long userID);
+    UserRoleEntity read(Long id);
 
-    UserRole update(UserRole role);
+    UserRoleEntity update(UserRoleEntity role);
 
-    void delete(UserRole role);
+    UserRoleEntity update(UpdateUserRoleRequestDTO userRoleRequestDTO, Long id);
 
-    UserRole delete(Long id);
+    void delete(UserRoleEntity role);
 
-    List<UserRole> findAll();
+    UserRoleEntity delete(Long id);
+
+    List<UserRoleEntity> findAll();
 }

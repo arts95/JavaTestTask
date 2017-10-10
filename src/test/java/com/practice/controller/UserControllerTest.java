@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.demo.DemoApplication;
 import com.practice.demo.controller.CommonExceptionHandlerController;
 import com.practice.demo.controller.UserController;
-import com.practice.demo.dto.request.CreateUserRequest;
-import com.practice.demo.dto.request.UpdateUserRequest;
-import com.practice.demo.entity.User;
+import com.practice.demo.dto.request.CreateUserRequestDTO;
+import com.practice.demo.dto.request.UpdateUserRequestDTO;
+import com.practice.demo.entity.UserEntity;
 import com.practice.demo.repository.UserRepository;
 
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User user;
+    private UserEntity user;
 
     private MockMvc mockMvc;
 
@@ -52,7 +52,7 @@ public class UserControllerTest {
 
         userRepository.deleteAllInBatch();
 
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setEmail("Email");
         user.setName("Arsenal");
         this.user = userRepository.save(user);
@@ -62,7 +62,7 @@ public class UserControllerTest {
     @Transactional
     public void shouldCreateNewUser() throws Exception {
 
-        CreateUserRequest user = new CreateUserRequest();
+        CreateUserRequestDTO user = new CreateUserRequestDTO();
         user.setEmail("test@test.com");
         user.setName("Name Name");
 
@@ -75,7 +75,7 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(user.getName()))
                 .andExpect(status().is2xxSuccessful());
 
-        User actualUser = userRepository.findByEmail(user.getEmail());
+        UserEntity actualUser = userRepository.findByEmail(user.getEmail());
         assertThat(actualUser, notNullValue());
         assertThat(actualUser.getEmail(), equalTo(user.getEmail()));
         assertThat(actualUser.getName(), equalTo(user.getName()));
@@ -84,7 +84,7 @@ public class UserControllerTest {
     @Test
     public void shouldUpdateUser() throws Exception {
         String name = "Updated";
-        UpdateUserRequest user = new UpdateUserRequest();
+        UpdateUserRequestDTO user = new UpdateUserRequestDTO();
 
         user.setName(name);
 

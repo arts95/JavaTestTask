@@ -4,11 +4,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
-public class CreateUserRoleRequest {
+public class UpdateUserRoleRequestDTO {
     @NotEmpty
     private String name;
-    @NotNull
-    private Long userID;
 
     public String getName() {
         return name;
@@ -16,13 +14,5 @@ public class CreateUserRoleRequest {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getUserID() {
-        return userID;
-    }
-
-    public void setUserID(Long userID) {
-        this.userID = userID;
     }
 }

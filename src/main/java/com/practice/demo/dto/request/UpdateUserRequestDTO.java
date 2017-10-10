@@ -2,9 +2,7 @@ package com.practice.demo.dto.request;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
-
-public class UpdateUserRoleRequest {
+public class UpdateUserRequestDTO {
     @NotEmpty
     private String name;
 

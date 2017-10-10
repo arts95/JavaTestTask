@@ -1,25 +1,27 @@
 package com.practice.demo.service;
 
 
-import com.practice.demo.entity.User;
+import com.practice.demo.dto.request.CreateUserRequestDTO;
+import com.practice.demo.dto.request.UpdateUserRequestDTO;
+import com.practice.demo.entity.UserEntity;
 
 import java.util.List;
 
 
 public interface UserService {
-    User create(User user);
+    UserEntity create(UserEntity user);
 
-    User read(Long id);
+    UserEntity create(CreateUserRequestDTO userRequestDTO);
 
-    User readByEmail(String email);
+    UserEntity read(Long id);
 
-    User update(User user);
+    UserEntity update(UserEntity user);
 
-    void delete(User user);
+    UserEntity update(UpdateUserRequestDTO userRequestDTO, Long id);
 
-    User delete(Long id);
+    void delete(UserEntity user);
 
-    Long getIdByEmail(String email);
+    UserEntity delete(Long id);
 
-    List<User> findAll();
+    List<UserEntity> findAll();
 }

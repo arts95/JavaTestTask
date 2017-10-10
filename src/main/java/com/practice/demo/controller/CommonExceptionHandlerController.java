@@ -13,17 +13,17 @@ import com.practice.demo.exception.EntityNotFoundException;
 @ControllerAdvice
 public class CommonExceptionHandlerController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonExceptionHandlerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommonExceptionHandlerController.class);
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public void handleEntityNotFoundException(EntityNotFoundException ex) {
-        LOGGER.error(ex.getMessage(), ex);
+        logger.error(ex.getMessage(), ex);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(Exception.class)
     public void handleAllExceptions(Exception ex) {
-        LOGGER.error(ex.getMessage(), ex);
+        logger.error(ex.getMessage(), ex);
     }
 }

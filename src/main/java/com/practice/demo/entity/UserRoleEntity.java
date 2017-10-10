@@ -4,13 +4,13 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "user_roles")
-public class UserRole extends BaseEntity {
+public class UserRoleEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     public String getName() {
         return name;
@@ -20,11 +20,11 @@ public class UserRole extends BaseEntity {
         this.name = name;
     }
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 }

@@ -1,6 +1,8 @@
 package com.practice.demo.dto.response;
 
-public class UserDetail {
+import com.practice.demo.entity.UserEntity;
+
+public class UserDetailDTO {
     private String name;
     private String email;
 
@@ -18,5 +20,10 @@ public class UserDetail {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public UserDetailDTO(UserEntity userEntity) {
+        this.name = userEntity.getName();
+        this.email = userEntity.getEmail();
     }
 }

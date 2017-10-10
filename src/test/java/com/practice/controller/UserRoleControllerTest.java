@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.demo.DemoApplication;
 import com.practice.demo.controller.CommonExceptionHandlerController;
 import com.practice.demo.controller.UserRoleController;
-import com.practice.demo.dto.request.CreateUserRoleRequest;
-import com.practice.demo.dto.request.UpdateUserRoleRequest;
-import com.practice.demo.entity.User;
-import com.practice.demo.entity.UserRole;
+import com.practice.demo.dto.request.CreateUserRoleRequestDTO;
+import com.practice.demo.dto.request.UpdateUserRoleRequestDTO;
+import com.practice.demo.entity.UserEntity;
+import com.practice.demo.entity.UserRoleEntity;
 import com.practice.demo.repository.UserRepository;
 import com.practice.demo.repository.UserRoleRepository;
 import org.junit.Before;
@@ -22,9 +22,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,8 +41,6 @@ public class UserRoleControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private UserRole userRole;
-
     private MockMvc mockMvc;
 
 
@@ -55,54 +50,39 @@ public class UserRoleControllerTest {
 
         userRoleRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
-
-        User user = new User();
-        user.setEmail("Email2");
-        user.setName("Arsenal");
-
-        UserRole userRole = new UserRole();
-        userRole.setName("Name");
-        userRole.setUser(userRepository.save(user));
-        this.userRole = userRoleRepository.save(userRole);
     }
 
     @Test
     @Transactional
     public void shouldCreateNewUserRole() throws Exception {
-        CreateUserRoleRequest userRole = new CreateUserRoleRequest();
-
-        User user = new User();
-        user.setEmail("Email3");
-        user.setName("Arsenal");
-        User actualUser = userRepository.save(user);
-
-        userRole.setUserID(actualUser.getId());
-        userRole.setName("Name Name");
+        CreateUserRoleRequestDTO userRole = new CreateUserRoleRequestDTO();
+        UserEntity user = this.getNewUser();
+        userRole.setUserID(user.getId());
+        userRole.setName("Name1");
 
         String json = MAPPER.writeValueAsString(userRole);
 
-        mockMvc.perform(post("/roles")
+        mockMvc.perform(post("/users/" + user.getId() + "/roles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(userRole.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email").value(user.getEmail()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.name").value(user.getName()))
                 .andExpect(status().is2xxSuccessful());
-
-        UserRole actualRole = userRoleRepository.findByUserId(actualUser.getId());
-        assertThat(actualRole, notNullValue());
-        assertThat(actualRole.getUser().getId(), equalTo(userRole.getUserID()));
-        assertThat(actualRole.getName(), equalTo(userRole.getName()));
     }
 
     @Test
     @Transactional
     public void shouldUpdateUserRole() throws Exception {
         String name = "Updated";
-        UpdateUserRoleRequest userRoleRequest = new UpdateUserRoleRequest();
+        UpdateUserRoleRequestDTO userRoleRequest = new UpdateUserRoleRequestDTO();
 
         userRoleRequest.setName(name);
 
         String json = MAPPER.writeValueAsString(userRoleRequest);
-
-        mockMvc.perform(put("/roles/" + this.userRole.getId())
+        UserRoleEntity userRole = this.getNewUserRole();
+        mockMvc.perform(put("/users/" + userRole.getUser().getId() + "/roles/" + userRole.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andDo(print())
@@ -112,7 +92,7 @@ public class UserRoleControllerTest {
 
     @Test
     public void shouldNotReturnUser() throws Exception {
-        mockMvc.perform(get("/roles/0")
+        mockMvc.perform(get("/users/0/roles/0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -120,7 +100,8 @@ public class UserRoleControllerTest {
     @Test
     @Transactional
     public void shouldReturnUserRole() throws Exception {
-        mockMvc.perform(get("/roles/" + userRole.getId())
+        UserRoleEntity userRole = this.getNewUserRole();
+        mockMvc.perform(get("/users/" + userRole.getUser().getId() + "/roles/" + userRole.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(userRole.getName()))
@@ -131,7 +112,8 @@ public class UserRoleControllerTest {
     @Test
     @Transactional
     public void shouldReturnUserRoleList() throws Exception {
-        mockMvc.perform(get("/roles")
+        UserRoleEntity userRole = this.getNewUserRole();
+        mockMvc.perform(get("/users/" + userRole.getUser().getId() + "/roles")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound());
@@ -139,8 +121,22 @@ public class UserRoleControllerTest {
 
     @Test
     public void shouldDeleteUserRole() throws Exception {
-        mockMvc.perform(delete("/roles/" + userRole.getId())
+        UserRoleEntity userRole = this.getNewUserRole();
+        mockMvc.perform(delete("/users/" + userRole.getUser().getId() + "/roles/" + userRole.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    private UserRoleEntity getNewUserRole() {
+        UserRoleEntity userRole = new UserRoleEntity();
+        userRole.setName("Name");
+        userRole.setUser(this.getNewUser());
+        return userRoleRepository.save(userRole);
+    }
+
+    private UserEntity getNewUser() {
+        UserEntity user = new UserEntity("Arsenal" + Math.random(), "Email@email.com" + Math.random());
+        return userRepository.save(user);
+    }
+
 }

@@ -5,13 +5,13 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
-    private List<UserRole> roles;
+    private List<UserRoleEntity> roles;
 
     public String getName() {
         return name;
@@ -29,11 +29,19 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    public List<UserRole> getRoles() {
+    public List<UserRoleEntity> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<UserRole> roles) {
+    public void setRoles(List<UserRoleEntity> roles) {
         this.roles = roles;
+    }
+
+    public UserEntity(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    public UserEntity() {
     }
 }

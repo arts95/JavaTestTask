@@ -1,10 +1,10 @@
 package com.practice.demo.controller;
 
-import com.practice.demo.dto.request.CreateUserRequest;
-import com.practice.demo.dto.request.UpdateUserRequest;
-import com.practice.demo.dto.response.UserDetail;
-import com.practice.demo.dto.response.UserListItem;
-import com.practice.demo.entity.User;
+import com.practice.demo.dto.request.CreateUserRequestDTO;
+import com.practice.demo.dto.request.UpdateUserRequestDTO;
+import com.practice.demo.dto.response.UserDetailDTO;
+import com.practice.demo.dto.response.UserListItemDTO;
+import com.practice.demo.entity.UserEntity;
 import com.practice.demo.exception.EntityNotFoundException;
 import com.practice.demo.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -27,49 +27,30 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDetail create(@Valid @RequestBody CreateUserRequest createUserRequest) {
-        User user = new User();
-        user.setEmail(createUserRequest.getEmail());
-        user.setName(createUserRequest.getName());
-        userService.create(user);
-        UserDetail userDetail = new UserDetail();
-        userDetail.setEmail(user.getEmail());
-        userDetail.setName(user.getName());
-        return userDetail;
+    public UserDetailDTO create(@Valid @RequestBody CreateUserRequestDTO createUserRequest) {
+        return new UserDetailDTO(userService.create(createUserRequest));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDetail update(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
-        User user = userService.read(id);
-        if (user == null) {
-            throw new EntityNotFoundException("User with %s not exists", id.toString());
-        }
-        user.setName(updateUserRequest.getName());
-        user = userService.update(user);
-        UserDetail userDetail = new UserDetail();
-        userDetail.setEmail(user.getEmail());
-        userDetail.setName(user.getName());
-        return userDetail;
+    public UserDetailDTO update(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserRequestDTO updateUserRequest) {
+        return new UserDetailDTO(userService.update(updateUserRequest, id));
     }
 
     @ResponseStatus(HttpStatus.FOUND)
     @GetMapping("/{id}")
-    public UserDetail get(@PathVariable("id") Long id) {
-        User user = userService.read(id);
+    public UserDetailDTO get(@PathVariable("id") Long id) {
+        UserEntity user = userService.read(id);
         if (user == null) {
             throw new EntityNotFoundException("User with %s not exists", id.toString());
         }
-        UserDetail userDetail = new UserDetail();
-        userDetail.setEmail(user.getEmail());
-        userDetail.setName(user.getName());
-        return userDetail;
+        return new UserDetailDTO(user);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public Long delete(@PathVariable("id") Long id) {
-        User user = userService.read(id);
+        UserEntity user = userService.read(id);
         if (user == null) {
             throw new EntityNotFoundException("User with %s not exists", id.toString());
         }
@@ -80,10 +61,10 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.FOUND)
     @GetMapping
-    public List<UserListItem> getList() {
+    public List<UserListItemDTO> getList() {
         return userService.findAll().stream()
                 .map(user -> {
-                    UserListItem userListItem = new UserListItem();
+                    UserListItemDTO userListItem = new UserListItemDTO();
                     userListItem.setId(user.getId());
                     userListItem.setEmail(user.getEmail());
                     userListItem.setName(user.getName());

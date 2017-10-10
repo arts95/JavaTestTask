@@ -1,8 +1,8 @@
 package com.practice.service;
 
 import com.practice.demo.DemoApplication;
-import com.practice.demo.entity.User;
-import com.practice.demo.entity.UserRole;
+import com.practice.demo.entity.UserEntity;
+import com.practice.demo.entity.UserRoleEntity;
 import com.practice.demo.repository.UserRepository;
 import com.practice.demo.repository.UserRoleRepository;
 import com.practice.demo.service.UserRoleService;
@@ -31,20 +31,20 @@ public class UserRoleServiceImplTest {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    private UserRole userRole;
-    private User user;
+    private UserRoleEntity userRole;
+    private UserEntity user;
 
     @Before
     public void setup() {
         userRoleRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
 
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setName("Role Arsenal");
         user.setEmail("test@test.com");
         this.user = userRepository.save(user);
 
-        UserRole userRole = new UserRole();
+        UserRoleEntity userRole = new UserRoleEntity();
         userRole.setName("Role Arsenal");
         userRole.setUser(user);
         this.userRole = userRoleRepository.save(userRole);
@@ -53,7 +53,7 @@ public class UserRoleServiceImplTest {
     @Test
     public void shouldCreateUserRole() throws Exception {
         String name = "Arsenal Role";
-        UserRole userRole = new UserRole();
+        UserRoleEntity userRole = new UserRoleEntity();
         userRole.setName(name);
         userRole.setUser(this.user);
         userRole = userRoleService.create(userRole);
@@ -69,7 +69,7 @@ public class UserRoleServiceImplTest {
     public void shouldUpdateUserRoleName() throws Exception {
         String name = "Role+";
         this.userRole.setName(name);
-        UserRole userRole = userRoleService.update(this.userRole);
+        UserRoleEntity userRole = userRoleService.update(this.userRole);
 
         assertNotNull(userRole);
         assertNotNull(userRole.getId());
@@ -80,19 +80,7 @@ public class UserRoleServiceImplTest {
     @Test
     @Transactional
     public void shouldReadUserRole() throws Exception {
-        UserRole userRole = userRoleService.read(this.userRole.getId());
-
-        assertNotNull(userRole);
-        assertTrue(userRole.getId().equals(this.userRole.getId()));
-        assertTrue(userRole.getName().equals(this.userRole.getName()));
-        assertTrue(userRole.getUser().getId().equals(this.user.getId()));
-    }
-
-
-    @Test
-    @Transactional
-    public void shouldReadUserRoleByUserId() throws Exception {
-        UserRole userRole = userRoleService.readByUserId(this.user.getId());
+        UserRoleEntity userRole = userRoleService.read(this.userRole.getId());
 
         assertNotNull(userRole);
         assertTrue(userRole.getId().equals(this.userRole.getId()));
@@ -103,7 +91,7 @@ public class UserRoleServiceImplTest {
     @Test
     @Transactional
     public void shouldDeleteUserRoleById() throws Exception {
-        UserRole userRole = userRoleService.delete(this.userRole.getId());
+        UserRoleEntity userRole = userRoleService.delete(this.userRole.getId());
 
         assertTrue(userRole.getId().equals(this.userRole.getId()));
         assertTrue(userRole.getName().equals(this.userRole.getName()));
